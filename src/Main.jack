@@ -1,0 +1,134 @@
+
+
+class Main {
+    function void main() {
+        var GameBoard gameBoard;
+        var InfoBoard infoBoard;
+        var ScoreBoard scoreBoard;
+
+        var int hitStatus;
+
+
+        // gameState
+        // 0: Game over; 1: Normal
+        var int gameState;
+
+        // Move State
+        // 0: Game Over; 1: Normal
+        var int moveState;
+        var int score;
+        // Message
+        var int messageId;
+
+        let gameState = 1;
+        let score = 0;
+
+        let infoBoard = InfoBoard.new(256, 128, 245, 133);
+        do infoBoard.draw();
+
+
+        let gameBoard = GameBoard.new(256, 128, 245, 245);
+        let scoreBoard = ScoreBoard.new(384, 203, 245, 91);
+
+        while (true) {
+            let gameState = 1;
+            let score = 0;
+            let messageId = 0; 
+
+            do gameBoard.dispose();
+            do scoreBoard.dispose();
+
+            // Click Space to start the game
+            while (~(Keyboard.keyPressed() = 32)) {
+                do Sys.wait(1);
+            }
+
+            do Screen.clearScreen();
+
+            let gameBoard = GameBoard.new(256, 128, 245, 245);
+            do gameBoard.draw();
+            let scoreBoard = ScoreBoard.new(384, 203, 245, 91);
+            do scoreBoard.draw();
+
+            while (gameState = 1) {
+
+                do Sys.wait(50);
+                do gameBoard.clearArrows();
+                let moveState = gameBoard.moveAllTargets();
+            
+                if (moveState = 0) {
+                    // you were killed by an enemy
+                    let gameState = 0;
+                    let messageId = 1;
+                }
+                else {
+                    if (Keyboard.keyPressed() = 131) {
+                        do Memory.poke(24576, 0);
+                        let hitStatus = gameBoard.shootTopTarget();
+                        if (hitStatus = 2) {
+                            // killed a friend
+                            let gameState = 0;
+                            let messageId = 2;
+                        }
+                        if (hitStatus = 1) {
+                            let score = (score + 1);
+                        }
+                    }
+
+                    if (Keyboard.keyPressed() = 133) {
+                        do Memory.poke(24576, 0);
+                        let hitStatus = gameBoard.shootBottomTarget();
+                        if (hitStatus = 2) {
+                            // killed a friend
+                            let gameState = 0;
+                            let messageId = 2;
+                        }
+                        if (hitStatus = 1) {
+                            let score = (score + 1);
+                        }
+                    }
+
+                    if (Keyboard.keyPressed() = 130) {
+                        do Memory.poke(24576, 0);
+                        let hitStatus = gameBoard.shootLeftTarget();
+                        if (hitStatus = 2) {
+                            // killed a friend
+                            let gameState = 0;
+                            let messageId = 2;
+                        }
+                        if (hitStatus = 1) {
+                            let score = (score + 1);
+                        }
+                    }
+
+                    if (Keyboard.keyPressed() = 132) {
+                        do Memory.poke(24576, 0);
+                        let hitStatus = gameBoard.shootRightTarget();
+                        if (hitStatus = 2) {
+                            // killed a friend
+                            let gameState = 0;
+                            let messageId = 2;
+                        }
+                        if (hitStatus = 1) {
+                            let score = (score + 1);
+                        }
+                    }
+                }
+
+                do scoreBoard.updateNumEnemy(score);
+                do scoreBoard.printScore();
+                do scoreBoard.printMessage(messageId);
+                do gameBoard.draw();
+
+
+            }
+        }
+
+        return;
+    }
+
+}
+
+
+
+

@@ -1,0 +1,38 @@
+
+class StarNegative {
+
+    field int location;
+
+    constructor StarNegative new(int Alocation) {
+        let location = Alocation;
+        return this;
+    }
+
+    method void draw() {
+        var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, -16514);
+		do Memory.poke(memAddress + 32, -8323);
+		do Memory.poke(memAddress + 64, -4229);
+		do Memory.poke(memAddress + 96, -2185);
+		do Memory.poke(memAddress + 128, -1169);
+		do Memory.poke(memAddress + 160, -673);
+		do Memory.poke(memAddress + 192, -321);
+		do Memory.poke(memAddress + 224, 320);
+		do Memory.poke(memAddress + 256, -321);
+		do Memory.poke(memAddress + 288, -673);
+		do Memory.poke(memAddress + 320, -1169);
+		do Memory.poke(memAddress + 352, -2185);
+		do Memory.poke(memAddress + 384, -4229);
+		do Memory.poke(memAddress + 416, -8323);
+		do Memory.poke(memAddress + 448, -16514);
+		do Memory.poke(memAddress + 480, -1);
+	return;
+	}
+
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

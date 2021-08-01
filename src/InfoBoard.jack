@@ -1,0 +1,127 @@
+
+class InfoBoard {
+    
+    field int x, y;
+    field int width, height;
+    field String title;
+    field String subtitle;
+    field String instruction1;
+    field String instruction2;
+    field String instruction3;
+    field String instruction4;
+    field String instruction5;
+    field String instruction6;
+
+    // all stars
+    field StarNegative star0;
+    field StarNegative star1;
+    field StarNegative star2;
+    field StarNegative star3;
+    field StarNegative star4;
+    field StarNegative star5;
+    field StarNegative star6;
+    field StarNegative star7;
+    field StarNegative star8;
+    field StarNegative star9;
+
+    field int xs;
+    field int ys;
+
+     // Sreen upper corner
+    field int y1;
+     // Sreen lower corner
+    field int y2;
+     // Sreen left corner
+    field int x1;
+     // Sreen right corner
+    field int x2;
+
+    constructor InfoBoard new(int Ax, int Ay, int Awidth, int Aheight) {
+        let x = Ax;
+        let y = Ay;
+        let width = Awidth;
+        let height = Aheight;
+        let xs = (width - 1) / 2;
+        let ys = (height - 1) / 2;
+
+        let y1 = y - ys;
+        let y2 = y + ys;
+        let x1 = x - xs;
+        let x2 = x + xs;
+
+        let title = "Welcome to";
+        let subtitle = "Black-Enemies!";
+        let instruction1 = "Kill enemies and save friends.";
+        let instruction2 = "Friend- Void box";
+        let instruction6 = "Enemy- Solid box";
+        let instruction3 = "Up, Down, Right, Left.";
+        let instruction4 = "Stay concentrate!";
+        let instruction5 = "---Press space to start---";
+
+        let star0 = StarNegative.new(3456);
+        let star1 = StarNegative.new(240);
+        let star2 = StarNegative.new(280);
+        let star3 = StarNegative.new(735);
+        let star4 = StarNegative.new(998);
+        let star5 = StarNegative.new(1697);
+        let star6 = StarNegative.new(2554);
+        let star7 = StarNegative.new(3655);
+        let star8 = StarNegative.new(3449);
+        let star9 = StarNegative.new(3454);
+        return this;
+    }
+
+    method void draw() {
+        do drawBoard();
+        do Output.moveCursor(6,26);
+        do Output.printString(title);
+        do Output.moveCursor(7,24);
+        do Output.printString(subtitle);
+        do Output.moveCursor(10,17);
+        do Output.printString(instruction1);
+        do Output.moveCursor(11,24);
+        do Output.printString(instruction2);
+        do Output.moveCursor(12,24);
+        do Output.printString(instruction6);
+        do Output.moveCursor(13,22);
+        do Output.printString(instruction3);
+        do Output.moveCursor(14,24);
+        do Output.printString(instruction4);
+        do Output.moveCursor(16,19);
+        do Output.printString(instruction5);
+
+        do star0.draw();
+        do star1.draw();
+        do star2.draw();
+        do star3.draw();
+        do star4.draw();
+        do star5.draw();
+        do star6.draw();
+        do star7.draw();
+        do star8.draw();
+        do star9.draw();
+        return;
+    }
+
+    method void drawBoard() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0, 0, 511, 255);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(128, 64, 384, 192);
+        do Screen.setColor(true);
+        return;
+    }
+
+    method void dispose() {
+        do title.dispose();
+        do subtitle.dispose();
+        do instruction1.dispose();
+        do instruction2.dispose();
+        do instruction6.dispose();
+        do instruction3.dispose();
+        do instruction4.dispose();
+        do instruction5.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

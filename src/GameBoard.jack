@@ -1,0 +1,679 @@
+
+
+class GameBoard {
+    
+    field int x, y;
+    field int width, height;
+    field Player player;
+    field int xs;
+    field int ys;
+    
+    // Sreen upper corner
+    field int y1;
+    // Sreen lower corner
+    field int y2;
+    // Sreen left corner
+    field int x1;
+    // Sreen right corner
+    field int x2;
+
+
+    // all stars
+    field Star star1;
+    field Star star2;
+    field Star star3;
+    field Star star4;
+    field Star star5;
+    field Star star6;
+    field Star star7;
+    field Star star8;
+
+    field int arrLen;
+    field Array topGate;
+    field Array bottomGate;
+    field Array leftGate;
+    field Array rightGate;
+
+    // Arrows
+    field Arrow upArrow;
+    field Arrow downArrow;
+    field Arrow leftArrow;
+    field Arrow rightArrow;
+
+    field int goalDist;
+    field int enemyProb;
+    field int visibilityProb;
+
+    constructor GameBoard new(int Ax, int Ay, int Awidth, int Aheight) {
+        let x = Ax;
+        let y = Ay;
+        let width = Awidth;
+        let height = Aheight;
+        let xs = (width - 1) / 2;
+        let ys = (height - 1) / 2;
+
+        let y1 = y - ys;
+        let y2 = y + ys;
+        let x1 = x - xs;
+        let x2 = x + xs;
+
+        let goalDist = 60;
+        let enemyProb = 75;
+        let visibilityProb = 60;
+
+        let player = Player.new(x, y, 0);
+
+        let arrLen = 5;
+        let topGate = Array.new(arrLen);
+        let bottomGate = Array.new(arrLen);
+        let leftGate = Array.new(arrLen);
+        let rightGate = Array.new(arrLen);
+        let star1 = Star.new(130, 50);
+        let star2 = Star.new(282, 300);
+        let star3 = Star.new(735, 0);
+        let star4 = Star.new(998, 100);
+        let star5 = Star.new(1697, 700);
+        let star6 = Star.new(2554, 600);
+        let star7 = Star.new(3645, 190);
+        let star8 = Star.new(3428, 0);
+
+        do initAllGates(5);
+        do initArrows();
+        do Random.setSeed(137);
+
+        return this;
+    }
+
+
+    method void draw() {
+        do drawGameBoard();
+        do player.draw();
+        do star1.draw();
+        do star2.draw();
+        do star3.draw();
+        do star4.draw();
+        do star5.draw();
+        do star6.draw();
+        do star7.draw();
+        do star8.draw();
+        return;
+    }
+
+
+    method void drawGameBoard() {
+        do Screen.setColor(true);
+        do Screen.drawLine(x-xs, y-ys, x-15, y-ys);
+        do Screen.drawLine(x+15, y-ys, x+xs, y-ys);
+        do Screen.drawLine(x-xs, y+ys, x-15, y+ys);
+        do Screen.drawLine(x+15, y+ys, x+xs, y+ys);
+        do Screen.drawLine(x-xs, y-ys, x-xs, y-15);
+        do Screen.drawLine(x-xs, y+15, x-xs, y+ys);
+        do Screen.drawLine(x+xs, y-ys, x+xs, y-15);
+        do Screen.drawLine(x+xs, y+15, x+xs, y+ys);
+        return;
+    }
+
+    method void initArrows() {
+        let upArrow = Arrow.new(x,y,x,y,0,false);
+        let downArrow = Arrow.new(x,y,x,y,2,false);
+        let leftArrow = Arrow.new(x,y,x,y,3,false);
+        let rightArrow = Arrow.new(x,y,x,y,1,false);
+        return;
+    }
+
+
+
+    method void initGateNull(Array AgateArray, int arrLength) {
+        var int i;
+        let i = 0;
+        while (i < arrLength) {
+            let AgateArray[i] = null;
+            let i = (i + 1);
+        }
+        return;
+    }
+
+    method void initAllGates(int Aspeed) {
+        do Random.setSeed(Random.rand());
+        do initTopGateFull(x, y1, Aspeed);
+        do initBottomGateFull(x, y2, Aspeed);
+        do initLeftGateFull(x1, y, Aspeed);
+        do initRightGateFull(x2, y, Aspeed);
+        return;
+    }
+
+    method void initTopGateFull(int Ax, int Ay, int Aspeed) {
+        var int i;
+        var int randomType;
+        var boolean visibility;
+        let i = 0;
+        while (i < arrLen) {
+            let randomType = getRandomType(enemyProb);
+            let visibility = Random.randBoolean(visibilityProb);
+            let topGate[i] = Target.new(randomType, Ax, Ay - (i * goalDist), Aspeed, 2, x1, x2, y1, y2, visibility);
+            let i = (i + 1);
+        }
+        return;
+    }
+
+    method void initBottomGateFull(int Ax, int Ay, int Aspeed) {
+        var int i;
+        var int randomType;
+        var boolean visibility;
+        let i = 0;
+        while (i < arrLen) {
+            let randomType = getRandomType(enemyProb);
+            let visibility = Random.randBoolean(visibilityProb);
+            let bottomGate[i] = Target.new(randomType, Ax, Ay + (i * goalDist), Aspeed, 0, x1, x2, y1, y2, visibility);
+            let i = (i + 1);
+        }
+        return;
+    }
+
+    method void initLeftGateFull(int Ax, int Ay, int Aspeed) {
+        var int i;
+        var int randomType;
+        var boolean visibility;
+        let i = 0;
+        while (i < arrLen) {
+            let randomType = getRandomType(enemyProb);
+            let visibility = Random.randBoolean(visibilityProb);
+            let leftGate[i] = Target.new(randomType, Ax - (i * goalDist), Ay, Aspeed, 1, x1, x2, y1, y2, visibility);
+            let i = (i + 1);
+        }
+        return;
+    }
+
+    method void initRightGateFull(int Ax, int Ay, int Aspeed) {
+        var int i;
+        var int randomType;
+        var boolean visibility;
+        let i = 0;
+        while (i < arrLen) {
+            let randomType = getRandomType(enemyProb);
+            let visibility = Random.randBoolean(visibilityProb);
+            let rightGate[i] = Target.new(randomType, Ax + (i * goalDist), Ay, Aspeed, 3, x1, x2, y1, y2, visibility);
+            let i = (i + 1);
+        }
+        return;
+    }
+
+
+    method int moveTargets(Array AgateArray, int arrLength) {
+        var int i;
+        var Target target;
+        var Target lastTarget;
+        var int direction;
+        var boolean isHit;
+        // hitStatus indicates whether there was a hit
+        // 0- No hit; 1- Hit by Enemy; 2- Hit by Friend
+        var int hitStatus;
+        let hitStatus = 0;
+        let i = 0;
+        while (i < arrLength) {
+            let target = AgateArray[i];
+            do target.move();
+            let isHit = target.isHitPlayer(player);
+            // If hit
+            if (isHit) {
+                do target.erase();
+                if (target.getVisibility()) {
+                    if (target.getType() = 0)
+                    {
+                        let hitStatus = 1;
+                    }
+                    else {
+                        let hitStatus = 2;
+                    }
+                }
+
+                // Create new target
+                do replaceTarget(AgateArray, arrLength, i);
+            }
+
+            let i = (i + 1);
+        }
+        return hitStatus;
+    }
+
+
+    method void replaceTarget(Array AgateArray, int arrLength, int idx) {
+        
+        var Target target;
+        var Target lastTarget;
+        var int direction;
+        var boolean visibility;
+        var int randomType;
+
+        let target = AgateArray[idx];
+
+        if (idx = 0) {
+            let lastTarget = AgateArray[arrLength-1];
+        }
+        else {
+            let lastTarget = AgateArray[idx-1];
+        }
+        let direction = lastTarget.getDirection();
+        if (direction = 0) {
+            do target.setY(lastTarget.getY()+goalDist);
+        }
+        else {
+            if (direction = 1)
+            {
+                do target.setX(lastTarget.getX()-goalDist);
+            }
+            else {
+                if (direction = 2)
+                {
+                    do target.setY(lastTarget.getY()-goalDist);
+                }
+                else {
+                    do target.setX(lastTarget.getX()+goalDist);
+                }
+            }
+        }
+        do Random.setSeed(Random.rand());
+        let visibility = Random.randBoolean(visibilityProb);
+        let randomType = getRandomType(enemyProb);
+        do target.setVisibility(visibility);
+        do target.setType(randomType);
+        
+        return;
+    }
+
+
+
+
+    method int shootTopTarget() {
+
+        // Return values
+        // 0: Hit nothing; 1: Hit enemy; 2: Hit friend
+
+        var int i;
+        var int yLowest;
+        var int yTemp;
+        var int targetIdx;
+        var Target targetTemp;
+        var int returnState;
+
+        // Change player direction
+        do player.changeDirection(0);
+
+        let returnState = 0;
+        let yLowest = -1000; // An arbitrary large number
+        let targetIdx = 1000; // An arbitrary large number
+
+        let i = 0;
+        while (i < arrLen) {
+            let targetTemp = topGate[i];
+            if (targetTemp.getVisibility()) {
+                let yTemp = targetTemp.getY() + targetTemp.getYS();
+                if (yTemp > yLowest) {
+                    let targetIdx = i;
+                    let yLowest = yTemp;
+                }
+            }
+            let i = (i + 1);
+        }
+
+        if (targetIdx = 1000) {
+            let returnState = 0;
+            do upArrow.reset(player.getX(), player.getY() - player.getYS(), player.getX(), y1,0,true);
+            do upArrow.draw();
+        }
+        else {
+            if (yLowest < y1) {
+                let returnState = 0;
+                do upArrow.reset(player.getX(), player.getY() - player.getYS(), player.getX(), y1,0,true);
+                do upArrow.draw();
+            }
+            else {
+                let targetTemp = topGate[targetIdx];
+
+                // Shooting animation
+                do upArrow.reset(player.getX(), player.getY() - player.getYS(), targetTemp.getX(), targetTemp.getY() + targetTemp.getYS(),0,true);
+                do upArrow.draw();
+
+                // 0: Enemy; 1: Friend
+                if (targetTemp.getType() = 0) {
+                    let returnState = 1;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                }
+
+                else {
+                    let returnState = 2;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                }
+
+
+            }
+
+        }
+
+        do Random.setSeed(Random.rand());
+
+        return returnState;
+    }
+
+
+
+    method int shootBottomTarget() {
+        // Return values
+        // 0: Hit nothing; 1: Hit enemy; 2: Hit friend
+
+        var int i;
+        var int yHighest;
+        var int yTemp;
+        var int targetIdx;
+        var Target targetTemp;
+        var int returnState;
+
+        // Change player direction
+        do player.changeDirection(2);
+
+        let returnState = 0;
+        let yHighest = 1000; // An arbitrary large number
+        let targetIdx = 1000; // An arbitrary large number
+
+        let i = 0;
+        while (i < arrLen) {
+            let targetTemp = bottomGate[i];
+            if (targetTemp.getVisibility()) {
+                let yTemp = targetTemp.getY() - targetTemp.getYS();
+                if (yTemp < yHighest) {
+                    let targetIdx = i;
+                    let yHighest = yTemp;
+                }
+            }
+            let i = (i + 1);
+        }
+
+        if (targetIdx = 1000) {
+            let returnState = 0;
+            do downArrow.reset(player.getX(), player.getY() + player.getYS(), player.getX(), y2,2,true);
+            do downArrow.draw();
+        }
+        else {
+            if (yHighest > y2) {
+                let returnState = 0;
+                do downArrow.reset(player.getX(), player.getY() + player.getYS(), player.getX(), y2,2,true);
+                do downArrow.draw();
+            }
+            else {
+                let targetTemp = bottomGate[targetIdx];
+
+                // Shooting animation
+                do downArrow.reset(player.getX(), player.getY() + player.getYS(), targetTemp.getX(), targetTemp.getY() - targetTemp.getYS(),2,true);
+                do downArrow.draw();
+
+                // 0: Enemy; 1: Friend
+                if (targetTemp.getType() = 0) {
+                    let returnState = 1;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                }
+
+                else {
+                    let returnState = 2;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                }
+
+            }
+
+        }
+
+        do Random.setSeed(Random.rand());
+
+        return returnState;
+    }
+
+
+
+    method int shootLeftTarget() {
+        // Return values
+        // 0: Hit nothing; 1: Hit enemy; 2: Hit friend
+
+        var int i;
+        var int xRightMost;
+        var int xTemp;
+        var int targetIdx;
+        var Target targetTemp;
+        var int returnState;
+
+        // Change player direction
+        do player.changeDirection(3);
+
+        let returnState = 0;
+        let xRightMost = -1000; // An arbitrary large number
+        let targetIdx = 1000; // An arbitrary large number
+
+        let i = 0;
+        while (i < arrLen) {
+            let targetTemp = leftGate[i];
+            if (targetTemp.getVisibility()) {
+                let xTemp = targetTemp.getX() + targetTemp.getXS();
+                if (xTemp > xRightMost) {
+                    let targetIdx = i;
+                    let xRightMost = xTemp;
+                }
+            }
+            let i = (i + 1);
+        }
+
+        if (targetIdx = 1000) {
+            let returnState = 0;
+            do leftArrow.reset(player.getX() - player.getXS(), player.getY(), x1, player.getY(),3,true);
+            do leftArrow.draw();
+        }
+        else {
+            if (xRightMost < x1) {
+                let returnState = 0;
+                do leftArrow.reset(player.getX() - player.getXS(), player.getY(), x1, player.getY(),3,true);
+                do leftArrow.draw();
+            }
+            else {
+                let targetTemp = leftGate[targetIdx];
+
+                // Shooting animation
+                do leftArrow.reset(player.getX() - player.getXS(), player.getY(), targetTemp.getX() + targetTemp.getXS(), targetTemp.getY(),3,true);
+                do leftArrow.draw();
+
+                // 0: Enemy; 1: Friend
+                if (targetTemp.getType() = 0) {
+                    let returnState = 1;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                    // The below command cause bug
+                    //do replaceTarget(topGate, arrLen, targetIdx);
+                }
+
+                else {
+                    let returnState = 2;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                    // The below command cause bug
+                    //do replaceTarget(topGate, arrLen, targetIdx);
+                }
+
+            }
+
+        }
+
+        do Random.setSeed(Random.rand());
+
+        return returnState;
+    }
+
+
+
+    method int shootRightTarget() {
+        // Return values
+        // 0: Hit nothing; 1: Hit enemy; 2: Hit friend
+
+        var int i;
+        var int xLeftMost;
+        var int xTemp;
+        var int targetIdx;
+        var Target targetTemp;
+        var int returnState;
+
+        // Change player direction
+        do player.changeDirection(1);
+
+        let returnState = 0;
+        let xLeftMost = 1000; // An arbitrary large number
+        let targetIdx = 1000; // An arbitrary large number
+
+        let i = 0;
+        while (i < arrLen) {
+            let targetTemp = rightGate[i];
+            if (targetTemp.getVisibility()) {
+                let xTemp = targetTemp.getX() - targetTemp.getXS();
+                if (xTemp < xLeftMost) {
+                    let targetIdx = i;
+                    let xLeftMost = xTemp;
+                }
+            }
+            let i = (i + 1);
+        }
+
+        if (targetIdx = 1000) {
+            let returnState = 0;
+            do rightArrow.reset(player.getX() + player.getXS(), player.getY(), x2, player.getY(),1,true);
+            do rightArrow.draw();
+        }
+        else {
+            if (xLeftMost > x2) {
+                let returnState = 0;
+                do rightArrow.reset(player.getX() + player.getXS(), player.getY(), x2, player.getY(),1,true);
+                do rightArrow.draw();
+            }
+            else {
+                let targetTemp = rightGate[targetIdx];
+
+                // Shooting animation
+                do rightArrow.reset(player.getX() + player.getXS(), player.getY(), targetTemp.getX() - targetTemp.getXS(), player.getY(),1,true);
+                do rightArrow.draw();
+
+                // 0: Enemy; 1: Friend
+                if (targetTemp.getType() = 0) {
+                    let returnState = 1;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                }
+
+                else {
+                    let returnState = 2;
+                    do targetTemp.erase();
+                    do targetTemp.setVisibility(false);
+                }
+
+            }
+
+        }
+
+        do Random.setSeed(Random.rand());
+
+        return returnState;
+    }
+
+
+
+    method int moveAllTargets() {
+        var int numEnemyHit;
+        var int numFriendHit;
+        var int hitStatusTop;
+        var int hitStatusBottom;
+        var int hitStatusLeft;
+        var int hitStatusRight;
+
+        // Return State
+        // 0: Game Over; 1: Normal
+        var int returnState;
+        let returnState = 1;
+
+        let hitStatusTop = moveTargets(topGate, arrLen);
+        let hitStatusBottom = moveTargets(bottomGate, arrLen);
+        let hitStatusLeft = moveTargets(leftGate, arrLen);
+        let hitStatusRight = moveTargets(rightGate, arrLen);
+
+        if ((hitStatusTop = 1) | (hitStatusBottom = 1) | (hitStatusLeft = 1) | (hitStatusRight = 1)) {
+            let returnState = 0;
+        }
+
+        return returnState;
+    }
+
+
+    method void playerChangeDirection(int Adirection) {
+        do player.changeDirection(Adirection);
+        return;
+    }
+
+    method void clearArrows() {
+        do upArrow.erase();
+        do downArrow.erase();
+        do leftArrow.erase();
+        do rightArrow.erase();
+        // Set all arrows to invisible
+        do upArrow.setVisibility(false);
+        do downArrow.setVisibility(false);
+        do leftArrow.setVisibility(false);
+        do rightArrow.setVisibility(false);
+        return;
+    }
+
+    method int getRandomType(int cutOff) {
+        var int randInt;
+        var int randType;
+        let randInt = Random.randRange(100);
+        if (randInt < cutOff) {
+            let randType = 0;
+        }
+        else {
+            let randType = 1;
+        }
+        return randType;
+    }
+
+
+    method void dispose() {
+        var Target targetTemp;
+        var int i;
+
+        do player.dispose();
+
+        do upArrow.dispose();
+        do downArrow.dispose();
+        do leftArrow.dispose();
+        do rightArrow.dispose();
+
+        let i = 0;
+        while (i < arrLen) {
+            let targetTemp = topGate[i];
+            do targetTemp.dispose();
+            let targetTemp = bottomGate[i];
+            do targetTemp.dispose();
+            let targetTemp = leftGate[i];
+            do targetTemp.dispose();
+            let targetTemp = rightGate[i];
+            do targetTemp.dispose();
+            let i = (i + 1);
+        }
+
+        do topGate.dispose();
+        do bottomGate.dispose();
+        do leftGate.dispose();
+        do rightGate.dispose();
+
+        do Memory.deAlloc(this);
+        return;
+
+    }
+
+
+
+}

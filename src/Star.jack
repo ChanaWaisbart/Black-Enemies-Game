@@ -1,0 +1,85 @@
+
+class Star {
+
+    field int location;
+	field int waitSec;
+
+    constructor Star new(int Alocation, int AwaitSec) {
+        let location = Alocation;
+		let waitSec = AwaitSec;
+        return this;
+    }
+
+	method void draw(){
+		var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 16513);
+		do Memory.poke(memAddress + 32, 8322);
+		do Memory.poke(memAddress + 64, 4228);
+		do Memory.poke(memAddress + 96, 2184);
+		do Memory.poke(memAddress + 128, 1168);
+		do Memory.poke(memAddress + 160, 672);
+		do Memory.poke(memAddress + 192, 320);
+		do Memory.poke(memAddress + 224, 32447);
+		do Memory.poke(memAddress + 256, 320);
+		do Memory.poke(memAddress + 288, 672);
+		do Memory.poke(memAddress + 320, 1168);
+		do Memory.poke(memAddress + 352, 2184);
+		do Memory.poke(memAddress + 384, 4228);
+		do Memory.poke(memAddress + 416, 8322);
+		do Memory.poke(memAddress + 448, 16513);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+
+    method void drawStar() {
+        var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 16513);
+		do Memory.poke(memAddress + 32, 8322);
+		do Memory.poke(memAddress + 64, 4228);
+		do Memory.poke(memAddress + 96, 2184);
+		do Memory.poke(memAddress + 128, 1168);
+		do Memory.poke(memAddress + 160, 672);
+		do Memory.poke(memAddress + 192, 320);
+		do Memory.poke(memAddress + 224, 32447);
+		do Memory.poke(memAddress + 256, 320);
+		do Memory.poke(memAddress + 288, 672);
+		do Memory.poke(memAddress + 320, 1168);
+		do Memory.poke(memAddress + 352, 2184);
+		do Memory.poke(memAddress + 384, 4228);
+		do Memory.poke(memAddress + 416, 8322);
+		do Memory.poke(memAddress + 448, 16513);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+
+    method void eraseStar() {
+        var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, 0);
+		do Memory.poke(memAddress + 128, 0);
+		do Memory.poke(memAddress + 160, 0);
+		do Memory.poke(memAddress + 192, 0);
+		do Memory.poke(memAddress + 224, 0);
+		do Memory.poke(memAddress + 256, 0);
+		do Memory.poke(memAddress + 288, 0);
+		do Memory.poke(memAddress + 320, 0);
+		do Memory.poke(memAddress + 352, 0);
+		do Memory.poke(memAddress + 384, 0);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+
+
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

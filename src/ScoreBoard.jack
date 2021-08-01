@@ -1,0 +1,126 @@
+
+class ScoreBoard {
+
+    field int x, y;
+    field int width, height;
+
+    field int numEnemy;
+    field String gameStatus1;
+    field String gameStatus2;
+    field int xs;
+    field int ys;
+
+     // Sreen upper corner
+    field int y1;
+     // Sreen lower corner
+    field int y2;
+     // Sreen left corner
+    field int x1;
+     // Sreen right corner
+    field int x2;
+
+
+    constructor ScoreBoard new(int Ax, int Ay, int Awidth, int Aheight) {
+        let x = Ax;
+        let y = Ay;
+        let width = Awidth;
+        let height = Aheight;
+        let xs = (width - 1) / 2;
+        let ys = (height - 1) / 2;
+
+        let y1 = y - ys;
+        let y2 = y + ys;
+        let x1 = x - xs;
+        let x2 = x + xs;
+
+        let numEnemy = 0;
+        let gameStatus1 = "Press Space to";
+        let gameStatus2 = "Start/Restart.";
+
+        return this;
+    }
+
+
+    method void draw() {
+        do Screen.setColor(true);
+        do Output.moveCursor(14,1);
+        do Output.printString(gameStatus1);
+        do Output.moveCursor(16,1);
+        do Output.printString(gameStatus2);
+        do Output.moveCursor(14,49);
+        do Output.printString("Number of");
+        do Output.moveCursor(16,49);
+        do Output.printString("Enemies Killed: ");
+        do Output.moveCursor(18,54);
+        do Output.printInt(numEnemy);
+        return;
+    }
+
+    method void printScore() {
+        do Output.moveCursor(18,54);
+        do Output.printInt(numEnemy);
+        return;
+    }
+
+    method void printMessage(int messageId) {
+        
+        var String message1;
+        var String message2;
+        var String message3;
+
+        if (messageId = 0) {
+            let message1 = "doing well!";
+            let message2 = "";
+            let message3 = "";
+        }
+        else {
+            if (messageId = 1) {
+                let message1 = "           ";
+                let message2 = "You were killed by an enemy.";
+                let message3 = "Game Over!";
+            }
+            else {
+                let message1 = "              ";
+                let message2 = "You just killed a friend.";
+                let message3 = "Game Over!";
+            }
+        }
+        do Output.moveCursor(20,49);
+        do Output.printString(message1);
+
+        if(messageId){
+            do Screen.setColor(false);
+            do Screen.drawRectangle(130, 30, 380, 250);
+        }
+
+        do Output.moveCursor(6,18);
+        do Output.printString(message2);
+        do Output.moveCursor(4,28);
+        do Output.printString(message3);
+
+        do message1.dispose();
+        do message2.dispose();
+        do message3.dispose();
+
+        return;
+    }
+
+
+    method void updateNumEnemy(int An) {
+        let numEnemy = An;
+        return;
+    }
+
+    method void reset() {
+        let numEnemy = 0;
+        return;
+    }
+
+
+    method void dispose() {
+        do gameStatus1.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+}
